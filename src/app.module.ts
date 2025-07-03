@@ -29,11 +29,18 @@ import { Permission } from './models/core/permission.entity';
 import { RolePermission } from './models/core/role-permission.entity';
 import { UserRole } from './models/core/user-role.entity';
 import { EventInitializationService } from './services/EventInitializationService';
+import { RefundsModule } from './sales/refunds/refunds.module';
+import { Order } from './models/sales/order.entity';
+import { OrderItem } from './models/sales/order-item.entity';
+import { Payment } from './models/sales/payment.entity';
+import { Refund } from './models/sales/refund.entity';
+import { TicketType } from './models/events/ticket-type.entity';
+import { SalesInitializationService } from './services/SalesInitializationService';
 
 @Module({
   imports: [
     TypeOrmModule.forRoot(typeOrmConfig),
-    TypeOrmModule.forFeature([User, Role, Permission, RolePermission, UserRole]),
+    TypeOrmModule.forFeature([Order, OrderItem, Payment, Refund, User, TicketType, Event, Role, Permission, RolePermission, UserRole]),
     MongooseModule.forRootAsync({
       useFactory: () => mongooseConfig
     }),
@@ -50,14 +57,16 @@ import { EventInitializationService } from './services/EventInitializationServic
     SchedulesModule,
     OrdersModule,
     PaymentsModule,
-    ReportsModule
+    ReportsModule,
+    RefundsModule
   ],
   controllers: [AppController],
   providers: [
     AppService, 
     DatabaseMonitorService, 
     InitializationService,
-    EncryptionService
+    EncryptionService,
+    SalesInitializationService
   ],
 })
 export class AppModule { }

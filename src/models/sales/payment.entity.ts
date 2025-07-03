@@ -1,5 +1,23 @@
+// src/models/sales/payment.entity.ts - CORREGIDA
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, CreateDateColumn } from 'typeorm';
 import { Order } from './order.entity';
+
+export interface PaymentMetadata {
+  cardLast4?: string;
+  paymentGateway?: string;
+  fee?: number;
+  processedAt?: string;
+  gatewayResponse?: string;
+  gatewayCode?: string;
+  processingFee?: number;
+  refunds?: Array<{
+    amount: number;
+    processedAt: string;
+    gatewayRefundId: string;
+  }>;
+  error?: string;
+  [key: string]: any;
+}
 
 @Entity()
 export class Payment {
@@ -22,11 +40,7 @@ export class Payment {
   status: 'PENDING' | 'COMPLETED' | 'FAILED';
 
   @Column('json', { nullable: true })
-  metadata?: {
-    cardLast4?: string;
-    paymentGateway?: string;
-    fee?: number;
-  };
+  metadata?: PaymentMetadata;
 
   @CreateDateColumn()
   processedAt: Date;
