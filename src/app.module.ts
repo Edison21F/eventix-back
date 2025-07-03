@@ -28,6 +28,7 @@ import { Role } from './models/core/role.entity';
 import { Permission } from './models/core/permission.entity';
 import { RolePermission } from './models/core/role-permission.entity';
 import { UserRole } from './models/core/user-role.entity';
+import { EventInitializationService } from './services/EventInitializationService';
 
 @Module({
   imports: [

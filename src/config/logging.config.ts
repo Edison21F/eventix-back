@@ -4,6 +4,7 @@ import * as winston from 'winston';
 import * as moment from 'moment-timezone';
 import * as fs from 'fs';
 import * as path from 'path';
+import { key } from './key'
 
 const logsDir = path.join(__dirname, '../../logs');
 
@@ -51,7 +52,7 @@ export const logger = winston.createLogger({
 });
 
 // Mostrar también en consola si no está en producción
-if (process.env.NODE_ENV !== 'production') {
+if (key.app.env !== 'production') {
   logger.add(
     new winston.transports.Console({
       format: winston.format.combine(

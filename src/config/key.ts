@@ -16,7 +16,7 @@ const env = {
 
   // App
   APP_PORT: 3000,
-  NODE_ENV: 'development',
+  NODE_ENV: 'production', // o 'development'
 
   // Encriptación
   ENCRYPTION_ALGORITHM: 'aes-256-cbc',
