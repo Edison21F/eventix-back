@@ -18,6 +18,7 @@ import { SchedulesModule } from './transport/schedules/schedules.module';
 import { OrdersModule } from './sales/orders/orders.module';
 import { PaymentsModule } from './sales/payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
+import { DatabaseMonitorService } from './services/databaseMonitoreo.service';
 
 @Module({
   imports: [TypeOrmModule.forRoot(typeOrmConfig),
@@ -38,6 +39,6 @@ import { ReportsModule } from './reports/reports.module';
   PaymentsModule,
   ReportsModule],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,DatabaseMonitorService],
 })
 export class AppModule { }
