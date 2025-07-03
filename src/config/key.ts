@@ -9,7 +9,7 @@ const env = {
   DB_PORT: 3306,
 
   // Base de datos Mongo
-  MONGO_URL: 'mongodb://localhost:27017/event_ticketing',
+  MONGO_URL: 'mongodb://localhost:27017/',
 
   // JWT
   JWT_SECRET: 'EventTicketingSystem2023!',

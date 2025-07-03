@@ -7,16 +7,19 @@ export class DatabaseMonitorService implements OnModuleInit, OnModuleDestroy {
   constructor(private dataSource: DataSource) {}
 
   async onModuleInit() {
-    this.dataSource.initialize()
-      .then(() => {
+    if (!this.dataSource.isInitialized) {
+      try {
+        await this.dataSource.initialize();
         logger.info('✅ Database connected successfully');
-      })
-      .catch((error) => {
+      } catch (error) {
         logger.error('❌ Database connection failed', {
           message: error.message,
           stack: error.stack,
         });
-      });
+      }
+    } else {
+      logger.info('⚠️ Database connection already initialized');
+    }
 
     // Escuchar errores en la conexión en runtime (MySQL client)
     const driver = this.dataSource.driver;
@@ -33,6 +36,9 @@ export class DatabaseMonitorService implements OnModuleInit, OnModuleDestroy {
   }
 
   async onModuleDestroy() {
-    await this.dataSource.destroy();
+    if (this.dataSource.isInitialized) {
+      await this.dataSource.destroy();
+      logger.info('✅ Database connection destroyed');
+    }
   }
 }

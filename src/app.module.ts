@@ -5,6 +5,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { MongooseModule } from '@nestjs/mongoose';
 import { typeOrmConfig } from './config/database.orm';
 import { mongooseConfig } from './config/database.mongose';
+import { AuthModule } from './core/auth/auth.module';
 import { UsersModule } from './core/users/users.module';
 import { RolesModule } from './core/roles/roles.module';
 import { PermissionsModule } from './core/permissions/permissions.module';
@@ -19,26 +20,43 @@ import { OrdersModule } from './sales/orders/orders.module';
 import { PaymentsModule } from './sales/payments/payments.module';
 import { ReportsModule } from './reports/reports.module';
 import { DatabaseMonitorService } from './services/databaseMonitoreo.service';
+import { InitializationService } from './services/initialization.service';
+import { EncryptionService } from './services/encryption.service';
+// Importar entidades para el servicio de inicialización
+import { User } from './models/core/user.entity';
+import { Role } from './models/core/role.entity';
+import { Permission } from './models/core/permission.entity';
+import { RolePermission } from './models/core/role-permission.entity';
+import { UserRole } from './models/core/user-role.entity';
 
 @Module({
-  imports: [TypeOrmModule.forRoot(typeOrmConfig),
-  MongooseModule.forRootAsync({
-    useFactory: () => mongooseConfig
-  }),
-  UsersModule,
-  RolesModule,
-  PermissionsModule,
-  EventsModule,
-  MoviesModule,
-  ScreeningsModule,
-  RoomsModule,
-  ConcertsModule,
-  RoutesModule,
-  SchedulesModule,
-  OrdersModule,
-  PaymentsModule,
-  ReportsModule],
+  imports: [
+    TypeOrmModule.forRoot(typeOrmConfig),
+    TypeOrmModule.forFeature([User, Role, Permission, RolePermission, UserRole]),
+    MongooseModule.forRootAsync({
+      useFactory: () => mongooseConfig
+    }),
+    AuthModule,
+    UsersModule,
+    RolesModule,
+    PermissionsModule,
+    EventsModule,
+    MoviesModule,
+    ScreeningsModule,
+    RoomsModule,
+    ConcertsModule,
+    RoutesModule,
+    SchedulesModule,
+    OrdersModule,
+    PaymentsModule,
+    ReportsModule
+  ],
   controllers: [AppController],
-  providers: [AppService,DatabaseMonitorService],
+  providers: [
+    AppService, 
+    DatabaseMonitorService, 
+    InitializationService,
+    EncryptionService
+  ],
 })
 export class AppModule { }

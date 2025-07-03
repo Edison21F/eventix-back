@@ -1,1 +1,1 @@
-export class User {}
+export { User } from '../../../models/core/user.entity';

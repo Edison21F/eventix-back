@@ -13,16 +13,20 @@ export class User {
   @Column()
   passwordHash: string;
 
-  @Column('json')
-  personalData: {
-    firstName: string;
-    lastName: string;
-    birthDate?: Date;
-    address?: string;
-  };
-
   @Column({ default: true })
   isActive: boolean;
+
+  @Column({ default: false })
+  emailVerified: boolean;
+
+  @Column({ nullable: true })
+  emailVerificationToken?: string;
+
+  @Column({ nullable: true })
+  passwordResetToken?: string;
+
+  @Column({ nullable: true })
+  passwordResetExpires?: Date;
 
   @OneToMany(() => UserRole, userRole => userRole.user)
   roles: UserRole[];
@@ -30,8 +34,9 @@ export class User {
   @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   createdAt: Date;
 
-   @OneToMany(() => Order, order => order.user)
-    orders: Order[];
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+  updatedAt: Date;
 
-    
+  @OneToMany(() => Order, order => order.user)
+  orders: Order[];
 }

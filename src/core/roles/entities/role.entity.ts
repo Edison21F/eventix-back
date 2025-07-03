@@ -1,1 +1,1 @@
-export class Role {}
+export { Role } from '../../../models/core/role.entity';
