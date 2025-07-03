@@ -3,9 +3,12 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../../models/core/user.entity';
+import { Role } from '../../models/core/role.entity';
+import { UserRole } from '../../models/core/user-role.entity';
 import { EncryptionService } from '../../services/encryption.service';
 import { UserPersonalDataService } from '../../services/user-personal-data.service';
 import { LoginDto, ChangePasswordDto, ResetPasswordDto } from '../users/dto/auth.dto';
+import { CreateUserDto } from '../users/dto/create-user.dto';
 import { logger } from '../../config/logging.config';
 
 @Injectable()
@@ -13,10 +16,112 @@ export class AuthService {
   constructor(
     @InjectRepository(User)
     private userRepository: Repository<User>,
+    @InjectRepository(Role)
+    private roleRepository: Repository<Role>,
+    @InjectRepository(UserRole)
+    private userRoleRepository: Repository<UserRole>,
     private jwtService: JwtService,
     private encryptionService: EncryptionService,
     private personalDataService: UserPersonalDataService,
   ) {}
+
+  async register(createUserDto: CreateUserDto) {
+    // Verificar si el email ya existe
+    const existingUser = await this.userRepository.findOne({
+      where: { email: createUserDto.email }
+    });
+
+    if (existingUser) {
+      throw new BadRequestException('El email ya está registrado');
+    }
+
+    // Encriptar contraseña
+    const hashedPassword = await this.encryptionService.hashPassword(createUserDto.password);
+
+    // Crear usuario en MySQL
+    const user = this.userRepository.create({
+      email: createUserDto.email,
+      passwordHash: hashedPassword,
+      isActive: true,
+      emailVerified: false,
+    });
+
+    const savedUser = await this.userRepository.save(user);
+
+    // Crear datos personales en MongoDB
+    if (createUserDto.personalData) {
+      await this.personalDataService.create({
+        userId: savedUser.id,
+        firstName: createUserDto.personalData.firstName ?? '',
+        lastName: createUserDto.personalData.lastName ?? '',
+        birthDate: createUserDto.personalData.birthDate
+          ? (typeof createUserDto.personalData.birthDate === 'string'
+              ? new Date(createUserDto.personalData.birthDate)
+              : createUserDto.personalData.birthDate)
+          : undefined,
+        address: createUserDto.personalData.address ?? '',
+        phone: createUserDto.personalData.phone ?? '',
+        documentType: createUserDto.personalData.documentType ?? '',
+        documentNumber: createUserDto.personalData.documentNumber ?? '',
+        nationality: createUserDto.personalData.nationality ?? '',
+        emergencyContact: typeof createUserDto.personalData.emergencyContact === 'object'
+          ? createUserDto.personalData.emergencyContact
+          : undefined,
+        preferences: typeof createUserDto.personalData.preferences === 'object'
+          ? createUserDto.personalData.preferences
+          : undefined,
+      });
+    }
+
+    // Asignar rol de customer por defecto si no se especifica otro
+    const roleIds = createUserDto.roleIds || [];
+    if (roleIds.length === 0) {
+      const customerRole = await this.roleRepository.findOne({
+        where: { name: 'customer' }
+      });
+      if (customerRole) {
+        roleIds.push(customerRole.id);
+      }
+    }
+
+    // Asignar roles
+    if (roleIds.length > 0) {
+      await this.assignRoles(savedUser.id, roleIds);
+    }
+
+    logger.info('User registered successfully', {
+      userId: savedUser.id,
+      email: savedUser.email
+    });
+
+    // Retornar usuario sin datos sensibles
+    return {
+      message: 'Usuario registrado exitosamente',
+      user: {
+        id: savedUser.id,
+        email: savedUser.email,
+        isActive: savedUser.isActive,
+        emailVerified: savedUser.emailVerified,
+      }
+    };
+  }
+
+  private async assignRoles(userId: number, roleIds: number[]): Promise<void> {
+    const roles = await this.roleRepository.findByIds(roleIds);
+    
+    if (roles.length !== roleIds.length) {
+      throw new BadRequestException('Algunos roles no existen');
+    }
+
+    const userRoles = roles.map(role => 
+      this.userRoleRepository.create({
+        user: { id: userId } as User,
+        role: role,
+      })
+    );
+
+    await this.userRoleRepository.save(userRoles);
+  }
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({

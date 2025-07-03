@@ -8,6 +8,8 @@ import { AuthController } from './auth.controller';
 import { LocalStrategy } from './strategies/local.strategy';
 import { JwtStrategy } from './strategies/jwt.strategies';
 import { User } from '../../models/core/user.entity';
+import { Role } from '../../models/core/role.entity';
+import { UserRole } from '../../models/core/user-role.entity';
 import { UserPersonalData, UserPersonalDataSchema } from '../../models/core/user-personal-data.schema';
 import { EncryptionService } from '../../services/encryption.service';
 import { UserPersonalDataService } from '../../services/user-personal-data.service';
@@ -15,7 +17,7 @@ import { key } from '../../config/key';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([User]),
+    TypeOrmModule.forFeature([User, Role, UserRole]),
     MongooseModule.forFeature([
       { name: UserPersonalData.name, schema: UserPersonalDataSchema }
     ]),
