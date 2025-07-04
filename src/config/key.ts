@@ -2,11 +2,12 @@
 
 const env = {
   // Base de datos relacional (MySQL, PostgreSQL, etc.)
-  DB_USER: 'root',
-  DB_PASS: '',
-  DB_HOST: 'localhost',
+  DB_USER: 'linkear',
+  DB_PASS: '0987021692@Rj',
+  DB_HOST: '31.97.42.126',
   DB_NAME: 'tickets',
   DB_PORT: 3306,
+
 
   // Base de datos Mongo
   MONGO_URL: 'mongodb://localhost:27017/',
