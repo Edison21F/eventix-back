@@ -10,7 +10,7 @@ import { User } from '../models/core/user.entity';
 import { TicketType } from '../models/events/ticket-type.entity';
 import { Event } from '../models/events/event.entity';
 import { logger } from '../config/logging.config';
-import { OrderStatus } from 'src/sales/orders/dto/update-order.dto';
+import { OrderStatus } from '../Dto/update/update-order.dto';
 
 interface TestOrderData {
     userId: number;

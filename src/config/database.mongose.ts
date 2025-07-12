@@ -1,5 +1,5 @@
 import { MongooseModuleOptions } from '@nestjs/mongoose';
-import { key } from './key';
+import { key } from '../key';
 
 export const mongooseConfig: MongooseModuleOptions = {
   uri: key.mongo.url,

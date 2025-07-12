@@ -1,1 +1,0 @@
-export { User } from '../../../models/core/user.entity';

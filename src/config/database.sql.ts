@@ -1,5 +1,5 @@
 import { createPool } from 'mysql2/promise'; // Usando mysql2 para promesas
-import { key } from './key'; // Importa las claves de configuración
+import { key } from '../key'; // Importa las claves de configuración
 
 export const sqlConfig = {
   host: key.db.host,

@@ -1,5 +1,5 @@
 import { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { key } from './key';
+import { key } from '../key';
 
 export const typeOrmConfig: TypeOrmModuleOptions = {
   type: 'mysql',
@@ -23,7 +23,6 @@ export const typeOrmConfig: TypeOrmModuleOptions = {
     __dirname + '/../models/sales/*.entity.{ts,js}',
   ],
   synchronize: true, // Solo para desarrollo
-  logging: ['query', 'error'],
   dropSchema: false, // Cambiado a false para evitar pérdida de datos
 };
 

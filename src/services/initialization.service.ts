@@ -7,7 +7,7 @@ import { Permission } from '../models/core/permission.entity';
 import { RolePermission } from '../models/core/role-permission.entity';
 import { UserRole } from '../models/core/user-role.entity';
 import { EncryptionService } from './encryption.service';
-import { PermissionsService } from '../core/permissions/permissions.service';
+import { PermissionsService } from './permissions.service';
 import { logger } from '../config/logging.config';
 
 @Injectable()

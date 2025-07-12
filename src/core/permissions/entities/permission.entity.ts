@@ -1,1 +1,0 @@
-export { Permission } from '../../../models/core/permission.entity';
